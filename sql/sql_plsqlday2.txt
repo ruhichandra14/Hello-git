@@ -1,0 +1,73 @@
+CREATE table "CUSTOMER" (
+    "CUSTOMER_NO"   NUMBER(10),
+    "CUSTOMER_NAME" VARCHAR2(40),
+    "EMAIL"         VARCHAR2(30),
+    "HANDPHONE"     NUMBER(10),
+    constraint  "CUSTOMER_PK" primary key ("CUSTOMER_NO")
+)
+/
+
+select c.customer_No,c.customer_Name,c.email,c.handphone,i.invoiceNumber,i.invoiceDate from Customer c,Invoice i where c.customer_No = i.customerRef;
+
+
+
+---------------------------------------------------------------
+
+select c.customer_No,c.customer_Name,c.email,c.handphone,i.invoiceNumber,i.invoiceDate from Customer c,Invoice i where c.customer_No = i.customerRef(+);
+
+select c.customer_No,c.customer_Name,c.email,c.handphone,i.invoiceNumber,i.invoiceDate from Customer c,Invoice i where c.customer_No = i.customerRef;
+
+select * from Customer c,Invoice i where c.customer_No = i.customerRef;
+
+select * from Customer c,Invoice i where c.customer_No = i.customerRef(+);
+
+select * from Customer c,Invoice i where c.customer_No(+) = i.customerRef;
+
+desc Customer;
+select * from Customer;
+desc invoice;
+select * from Invoice ;
+
+select b.invoicenumber from invoice a,invoice b where a.customerRef= 103 and a.invoicedate=b.invoicedate;
+
+select * from invoice where customerref = (select customer_no from customer where customer_name='Veer');
+
+-----------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE add_customer(c_No customer.customer_No%TYPE,c_Name customer.customer_Name%TYPE,c_email customer.email%TYPE,c_phone customer.handPhone%TYPE )
+IS
+begin
+ insert into customer values(c_No,c_Name,c_email,c_Phone);
+
+end;
+
+BEGIN
+add_customer(500,'Veeraj','vrj@vrj.com',9434471123);
+END add_customer;
+----------------------------------------------------------------------
+
+create or replace procedure query_customer(c_No  in customer.customer_No%TYPE,c_Name out customer.customer_Name%TYPE,c_email out customer.email%TYPE,c_phone out customer.handPhone%TYPE )
+is
+begin
+  select customer_Name,email,handPhone into c_Name,c_email,c_phone from customer where  customer_No=c_No;
+exception
+  when no_data_found then
+      raise_application_error(-20001,'customer doesnot exist');
+
+end;
+
+declare
+
+c_Name customer.customer_Name%TYPE;
+c_email customer.email%TYPE;
+c_phone customer.handPhone%TYPE;
+
+begin
+query_customer(101,c_name,c_email,c_phone);
+ 
+ dbms_output.put_line(c_Name);
+ dbms_output.put_line(c_email );
+ dbms_output.put_line(c_phone);
+end
+---------------------------------------------------------------------------
+select * from customer;
